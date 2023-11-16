@@ -32,7 +32,7 @@ jobs:
         if: startsWith(github.ref, 'refs/heads/')
         shell: bash {0}
         run: |
-          tag="$(gawk 'match($0, \"<Version>(.+)</Version>\", ary) {print ary[1]}' PdfService/PdfService.csproj)-$(git rev-parse --short HEAD)"
+          tag="$(gawk 'match($0, "<Version>(.+)</Version>", ary) {print ary[1]}' PdfService/PdfService.csproj)-$(git rev-parse --short HEAD)"
           echo "tag=$tag" >> $GITHUB_ENV
           echo "environment=dev" >> $GITHUB_ENV
 
