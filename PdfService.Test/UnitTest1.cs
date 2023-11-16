@@ -27,7 +27,7 @@ namespace PdfService.Test
             byte[]? result = await client.PostJsonAsync<Dictionary<string, string>, byte[]>("/PdfProcessor/PdfContract", myDict);
             if (result is not null)
             {
-                System.IO.File.WriteAllBytes(@"C:\\Users\mbuskies\Desktop\myfile.pdf", result);
+                System.IO.File.WriteAllBytes(@"D:\myfile.pdf", result);
             }
             Assert.IsNotNull(result);
         }
@@ -71,7 +71,13 @@ namespace PdfService.Test
                 }
 
 
-                Stream contentStream = await response.Content.ReadAsStreamAsync();
+                MemoryStream contentStream = (MemoryStream) await response.Content.ReadAsStreamAsync();
+                if(typeof(TResponse) == typeof(byte[]))
+                {
+                    TResponse myResponse = (TResponse)Convert.ChangeType(contentStream.ToArray(), typeof(TResponse));
+                    return myResponse;
+                    //byte[] myByteArray = new BinaryReader(contentStream).ReadBytes((int) contentStream.Length);
+                }
                 TResponse? model = await JsonSerializer.DeserializeAsync<TResponse>(contentStream, TrainCloudJsonSerializerOptions);
 
                 return model;
