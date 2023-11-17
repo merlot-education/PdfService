@@ -38,17 +38,18 @@ public class ContractDocument : IDocument
         {
             row.RelativeItem().Column(column =>
             {
-                column.Item().AlignCenter().Text($"Vertrags-ID {Model.ContractId}").FontSize(10).FontColor(Colors.Grey.Darken2);
-                column.Item().ShowOnce().Text("").FontSize(10);
+                column.Item().AlignCenter().Text(text =>
+                {
+                    text.Span("Vertrags-ID ").FontSize(10).FontColor(Colors.Grey.Darken2);
+                    text.Line(Model.ContractId).FontSize(10).FontColor(Colors.Grey.Darken2).Italic();
+                });
 
                 column.Item().ShowOnce().AlignCenter().Text($"Vertrag zum Bereitstellen einer {Model.ServiceType}").Style(titleStyle);
-
                 column.Item().ShowOnce().AlignCenter().Text(text =>
                 {
                     text.Span("zwischen ").SemiBold();
                     text.Span($"{Model.ProviderLegalName} - nachfolgend der Serviceanbieter genannt -");
                 });
-
                 column.Item().ShowOnce().AlignCenter().Text(text =>
                 {
                     text.Span("und ").SemiBold();
@@ -75,6 +76,7 @@ public class ContractDocument : IDocument
     void ComposeContent(IContainer container)
     {
         var textStyle = TextStyle.Default.FontSize(12);
+        var textSpecialStyle = TextStyle.Default.FontSize(12).Italic();
         var captionStyle = TextStyle.Default.FontSize(14).Bold();
         var spacing = 5;
 
@@ -88,7 +90,9 @@ public class ContractDocument : IDocument
                 text.ParagraphSpacing(spacing);
                 text.Line($"§ {paragraphIndex} Vertragsgegenstand").Style(captionStyle);
                 text.Line("Der Serviceanbieter verpflichtet sich, folgende Dienstleistungen für den Servicenehmer zu erbringen:").Style(textStyle);
-                text.Line($"Service ID {Model.ServiceId} :").Style(textStyle);
+                text.Span("Service ID ").Style(textStyle);
+                text.Span(Model.ServiceId).Style(textSpecialStyle);
+                text.Line(" :").Style(textStyle);
                 text.Line($"\"{Model.ServiceName}\"").Style(textStyle);
                 text.Line($"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate}").Style(textStyle);
                 paragraphIndex++;
