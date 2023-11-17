@@ -2,7 +2,8 @@
 {
     public class ContractTncModel
     {
-        public string TncLink { get; set; }
-        public string TncHash { get; set; }
+        private static string MISSING = "[missing]";
+        public string TncLink { get; set; } = MISSING;
+        public string TncHash { get; set; } = MISSING;
     }
 }

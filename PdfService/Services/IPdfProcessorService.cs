@@ -1,6 +1,8 @@
-﻿namespace PdfService.Services;
+﻿using PdfService.Models;
+
+namespace PdfService.Services;
 
 public interface IPdfProcessorService
 {
-    byte[] PdfContract(Dictionary<string, string> fields);
+    byte[] PdfContract(ContractModel model);
 }

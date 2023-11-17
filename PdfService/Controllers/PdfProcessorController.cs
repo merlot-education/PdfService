@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PdfService.Models;
 using PdfService.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Diagnostics;
@@ -25,11 +26,11 @@ public class PdfProcessorController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK)]
     [SwaggerResponse(StatusCodes.Status400BadRequest)]
     [SwaggerResponse(StatusCodes.Status500InternalServerError)]
-    public IActionResult PostPdfContract([FromBody] Dictionary<string, string> data)
+    public IActionResult PostPdfContract([FromBody] ContractModel model)
     {
         try
         {
-            byte[] result = PdfProcessorService.PdfContract(data);
+            byte[] result = PdfProcessorService.PdfContract(model);
 
             return new FileStreamResult(new MemoryStream(result), "application/pdf");
         } 
