@@ -20,4 +20,10 @@
         <PackageReference Include="HarfBuzzSharp.NativeAssets.Linux" Version="7.3.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="merlot_logo.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>
