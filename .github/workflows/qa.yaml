@@ -1,15 +1,16 @@
-name: Build
+name: Quality Assurance
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
+    tags:
+      - "*"
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build:
-    name: Build
+  analysis:
+    name: Analysis
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
