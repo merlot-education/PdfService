@@ -54,13 +54,13 @@ public class ContractDocument : IDocument
                 column.Item().ShowOnce().AlignCenter().Text($"Vertrag zum Bereitstellen einer {TypeMapping.GetValueOrDefault(Model.ServiceType, Model.ServiceType)}").Style(titleStyle);
                 column.Item().ShowOnce().AlignCenter().Text(text =>
                 {
-                    text.Span("zwischen   ").SemiBold();
-                    text.Span($"{Model.ProviderLegalName}   - nachfolgend der Serviceanbieter genannt -");
+                    text.Span("zwischen  ").SemiBold();
+                    text.Span($"{Model.ProviderLegalName} - nachfolgend der Serviceanbieter genannt -");
                 });
                 column.Item().ShowOnce().AlignCenter().Text(text =>
                 {
-                    text.Span("und   ").SemiBold();
-                    text.Span($"{Model.ConsumerLegalName}   - nachfolgend der Servicenehmer genannt -");
+                    text.Span("und  ").SemiBold();
+                    text.Span($"{Model.ConsumerLegalName} - nachfolgend der Servicenehmer genannt -");
                 });
             });
         });
