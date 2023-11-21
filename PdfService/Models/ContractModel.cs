@@ -2,7 +2,7 @@
 
 public class ContractModel
 {
-    private static string MISSING = "[missing]";
+    private static string MISSING = "-";
     public string ContractId { get; set; } = MISSING;
     public string ContractCreationDate { get; set; } = MISSING;
     public string ContractRuntime { get; set; } = MISSING;

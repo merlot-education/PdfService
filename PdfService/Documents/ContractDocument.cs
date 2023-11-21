@@ -9,6 +9,13 @@ public class ContractDocument : IDocument
 {
     private ContractModel Model { get; }
 
+    private Dictionary<string, string> TypeMapping = new Dictionary<string, string>()
+    {
+        { "merlot:MerlotServiceOfferingDataDelivery" , "Datenlieferung" },
+        { "merlot:MerlotServiceOfferingCooperation" , "Kooperation" },
+        { "merlot:MerlotServiceOfferingSaaS" , "Webanwendung" },
+    };
+
     public ContractDocument(ContractModel model)
     {
         Model = model;
@@ -44,15 +51,15 @@ public class ContractDocument : IDocument
                     text.Line(Model.ContractId).FontSize(10).FontColor(Colors.Grey.Darken2).Italic();
                 });
 
-                column.Item().ShowOnce().AlignCenter().Text($"Vertrag zum Bereitstellen einer {Model.ServiceType}").Style(titleStyle);
+                column.Item().ShowOnce().AlignCenter().Text($"Vertrag zum Bereitstellen einer {TypeMapping.GetValueOrDefault(Model.ServiceType, Model.ServiceType)}").Style(titleStyle);
                 column.Item().ShowOnce().AlignCenter().Text(text =>
                 {
-                    text.Span("zwischen ").SemiBold();
+                    text.Span("zwischen   ").SemiBold();
                     text.Span($"{Model.ProviderLegalName} - nachfolgend der Serviceanbieter genannt -");
                 });
                 column.Item().ShowOnce().AlignCenter().Text(text =>
                 {
-                    text.Span("und ").SemiBold();
+                    text.Span("und   ").SemiBold();
                     text.Span($"{Model.ConsumerLegalName} - nachfolgend der Servicenehmer genannt -");
                 });
             });
