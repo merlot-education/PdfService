@@ -55,12 +55,12 @@ public class ContractDocument : IDocument
                 column.Item().ShowOnce().AlignCenter().Text(text =>
                 {
                     text.Span("zwischen   ").SemiBold();
-                    text.Span($"{Model.ProviderLegalName} - nachfolgend der Serviceanbieter genannt -");
+                    text.Span($"{Model.ProviderLegalName}   - nachfolgend der Serviceanbieter genannt -");
                 });
                 column.Item().ShowOnce().AlignCenter().Text(text =>
                 {
                     text.Span("und   ").SemiBold();
-                    text.Span($"{Model.ConsumerLegalName} - nachfolgend der Servicenehmer genannt -");
+                    text.Span($"{Model.ConsumerLegalName}   - nachfolgend der Servicenehmer genannt -");
                 });
             });
         });
