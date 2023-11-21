@@ -85,6 +85,7 @@ public class ContractDocument : IDocument
         var textStyle = TextStyle.Default.FontSize(12);
         var textSpecialStyle = TextStyle.Default.FontSize(12).Italic();
         var captionStyle = TextStyle.Default.FontSize(14).Bold();
+        var dateTimeFormatter = "dd.MM.yyyy, HH:mm:ss (\"GMT\"zzz)";
         var spacing = 5;
 
         var paragraphIndex = 1;
@@ -101,7 +102,7 @@ public class ContractDocument : IDocument
                 text.Span(Model.ServiceId).Style(textSpecialStyle);
                 text.Line(" :").Style(textStyle);
                 text.Line($"\"{Model.ServiceName}\"").Style(textStyle);
-                text.Line($"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate}").Style(textStyle);
+                text.Line($"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate.ToString(dateTimeFormatter)}").Style(textStyle);
                 paragraphIndex++;
             });
 
@@ -219,10 +220,10 @@ public class ContractDocument : IDocument
             {
                 text.ParagraphSpacing(spacing);
                 text.Line($"Der Nutzer {Model.ProviderSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ProviderLegalName} unterzeichnet:").Style(textStyle);
-                text.Line($"{Model.ProviderSignatureTimestamp} (Signatur {Model.ProviderSignature})").Style(textStyle);
+                text.Line($"{Model.ProviderSignatureTimestamp.ToString(dateTimeFormatter)} (Signatur {Model.ProviderSignature})").Style(textStyle);
                 text.Line("");
                 text.Line($"Der Nutzer {Model.ConsumerSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ConsumerLegalName} unterzeichnet:").Style(textStyle);
-                text.Line($"{Model.ConsumerSignatureTimestamp} (Signatur {Model.ConsumerSignature})").Style(textStyle);
+                text.Line($"{Model.ConsumerSignatureTimestamp.ToString(dateTimeFormatter)} (Signatur {Model.ConsumerSignature})").Style(textStyle);
             });
         });
     }
