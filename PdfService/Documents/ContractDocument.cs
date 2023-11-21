@@ -125,7 +125,9 @@ public class ContractDocument : IDocument
                 paragraphIndex++;
             });
 
-            if (Model.ServiceHardwareRequirements != null && Model.ServiceHardwareRequirements != "")
+            if (Model.ServiceHardwareRequirements != null 
+                && Model.ServiceHardwareRequirements.Equals("") 
+                && Model.ServiceHardwareRequirements.Equals(ContractModel.MISSING))
             {
                 column.Item().ShowEntire().Text(text =>
                 {
@@ -147,7 +149,9 @@ public class ContractDocument : IDocument
                 paragraphIndex++;
             });
 
-            if (Model.ContractDataTransferCount != null && Model.ContractDataTransferCount != "")
+            if (Model.ContractDataTransferCount != null 
+                && Model.ContractDataTransferCount.Equals("")
+                && Model.ContractDataTransferCount.Equals(ContractModel.MISSING))
             {
                 column.Item().ShowEntire().Text(text =>
                 {
