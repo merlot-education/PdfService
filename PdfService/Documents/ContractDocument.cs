@@ -108,19 +108,19 @@ public class ContractDocument : IDocument
 
             column.Item().ShowEntire().Text(text =>
             {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Umfang der Leistungen").Style(captionStyle);
-            text.Line("Die übertragenen Dienstleistungen bestehen im Speziellen hieraus:").Style(textStyle);
-            text.Line($"\"{Model.ServiceDescription}\"").Style(textStyle);
-            text.Line("Der Serviceanbieter erklärt sich damit einverstanden, die aufgeführten Leistungen fachgerecht vorzunehmen. Die vereinbarte Vergütung bezieht sich ausschließlich auf die an dieser Stelle genannten Dienstleistungen.").Style(textStyle);
+                text.ParagraphSpacing(spacing);
+                text.Line($"§ {paragraphIndex} Umfang der Leistungen").Style(captionStyle);
+                text.Line("Die übertragenen Dienstleistungen bestehen im Speziellen hieraus:").Style(textStyle);
+                text.Line($"\"{Model.ServiceDescription}\"").Style(textStyle);
+                text.Line("Der Serviceanbieter erklärt sich damit einverstanden, die aufgeführten Leistungen fachgerecht vorzunehmen. Die vereinbarte Vergütung bezieht sich ausschließlich auf die an dieser Stelle genannten Dienstleistungen.").Style(textStyle);
 
-            if (Model.ServiceDataAccessType != null
-                && !Model.ServiceDataAccessType.Equals("")
-                && !Model.ServiceDataAccessType.Equals(ContractModel.MISSING))
-            {
-                text.Line("Die Daten werden folgendermaßen zur Verfügung gestellt:").Style(textStyle);
-                text.Line(Model.ServiceDataAccessType).Style(textStyle);
-
+                if (Model.ServiceDataAccessType != null
+                    && !Model.ServiceDataAccessType.Equals("")
+                    && !Model.ServiceDataAccessType.Equals(ContractModel.MISSING))
+                {
+                    text.Line("Die Daten werden folgendermaßen zur Verfügung gestellt:").Style(textStyle);
+                    text.Line(Model.ServiceDataAccessType).Style(textStyle);
+                }
                 paragraphIndex++;
             });
 
