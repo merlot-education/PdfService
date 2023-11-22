@@ -88,17 +88,18 @@ public class ContractDocument : IDocument
         container.PaddingVertical(40).Column(column =>
         {
             column.Spacing(Spacing);
-            if (WriteContractMatter(column, paragraphIndex)) paragraphIndex++;
-            if (WriteContractScope(column, paragraphIndex)) paragraphIndex++;
-            if (WriteCosts(column, paragraphIndex)) paragraphIndex++;
-            if (WriteHardwareRequirements(column, paragraphIndex)) paragraphIndex++;
-            if (WriteContractRuntime(column, paragraphIndex)) paragraphIndex++;
-            if (WriteDataTransferCount(column, paragraphIndex)) paragraphIndex++;
-            if (WriteContractChanges(column, paragraphIndex)) paragraphIndex++;
-            if (WriteContractCopy(column, paragraphIndex)) paragraphIndex++;
-            if (WriteFulfillmentPlace(column, paragraphIndex)) paragraphIndex++;
-            if (WriteMiscelaneous(column, paragraphIndex)) paragraphIndex++;
-            if (WriteEscapeClause(column, paragraphIndex)) paragraphIndex++;
+
+            paragraphIndex = WriteContractMatter(column, paragraphIndex);
+            paragraphIndex = WriteContractScope(column, paragraphIndex);
+            paragraphIndex = WriteCosts(column, paragraphIndex);
+            paragraphIndex = WriteHardwareRequirements(column, paragraphIndex);
+            paragraphIndex = WriteContractRuntime(column, paragraphIndex);
+            paragraphIndex = WriteDataTransferCount(column, paragraphIndex);
+            paragraphIndex = WriteContractChanges(column, paragraphIndex);
+            paragraphIndex = WriteContractCopy(column, paragraphIndex);
+            paragraphIndex = WriteFulfillmentPlace(column, paragraphIndex);
+            paragraphIndex = WriteMiscelaneous(column, paragraphIndex);
+            paragraphIndex = WriteEscapeClause(column, paragraphIndex);
             WriteSignatures(column);
         });
     }
@@ -116,7 +117,7 @@ public class ContractDocument : IDocument
         });
     }
 
-    private bool WriteContractMatter(ColumnDescriptor column, int paragraphIndex)
+    private int WriteContractMatter(ColumnDescriptor column, int paragraphIndex)
     {
 
         var caption = $"§ {paragraphIndex} Vertragsgegenstand";
@@ -131,10 +132,10 @@ public class ContractDocument : IDocument
         ];
 
         WriteCommonContractBlock(column, caption, lines);
-        return true;
+        return paragraphIndex + 1;
     }
 
-    private bool WriteContractScope(ColumnDescriptor column, int paragraphIndex)
+    private int WriteContractScope(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Umfang der Leistungen";
         List<string> lines =
@@ -153,10 +154,10 @@ public class ContractDocument : IDocument
         }
 
         WriteCommonContractBlock(column, caption, lines);
-        return true;
+        return paragraphIndex + 1;
     }
 
-    private bool WriteCosts(ColumnDescriptor column, int paragraphIndex)
+    private int WriteCosts(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Vergütung";
         List<string> lines = 
@@ -164,10 +165,10 @@ public class ContractDocument : IDocument
             "Die Vergütung der Erbringung des Vertragsgegenstandes ist im Anhang zu finden."
         ];
         WriteCommonContractBlock(column, caption, lines);
-        return true;
+        return paragraphIndex + 1;
     }
 
-    private bool WriteHardwareRequirements(ColumnDescriptor column, int paragraphIndex)
+    private int WriteHardwareRequirements(ColumnDescriptor column, int paragraphIndex)
     {
         if (Model.ServiceHardwareRequirements != null
                 && !Model.ServiceHardwareRequirements.Equals("")
@@ -180,12 +181,12 @@ public class ContractDocument : IDocument
                 Model.ServiceHardwareRequirements
             ];
             WriteCommonContractBlock(column, caption, lines);
-            return true;
+            return paragraphIndex + 1;
         }
-        return false;
+        return paragraphIndex;
     }
 
-    private bool WriteContractRuntime(ColumnDescriptor column, int paragraphIndex)
+    private int WriteContractRuntime(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Laufzeit";
         List<string> lines = 
@@ -194,10 +195,10 @@ public class ContractDocument : IDocument
             Model.ContractRuntime
         ];
         WriteCommonContractBlock(column, caption, lines);
-        return true;
+        return paragraphIndex + 1;
     }
 
-    private bool WriteDataTransferCount(ColumnDescriptor column, int paragraphIndex)
+    private int WriteDataTransferCount(ColumnDescriptor column, int paragraphIndex)
     {
         if (Model.ContractDataTransferCount != null
                 && !Model.ContractDataTransferCount.Equals("")
@@ -210,12 +211,12 @@ public class ContractDocument : IDocument
                 $"bis zu {Model.ContractDataTransferCount} Datenaustausche zu ermöglichen.",
             ];
             WriteCommonContractBlock(column, caption, lines);
-            return true;
+            return paragraphIndex + 1;
         }
-        return false;
+        return paragraphIndex;
     }
 
-    private bool WriteContractChanges(ColumnDescriptor column, int paragraphIndex)
+    private int WriteContractChanges(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Vertragsänderungen";
         List<string> lines = 
@@ -223,10 +224,10 @@ public class ContractDocument : IDocument
             "Jedwede Modifizierung dieses Vertrags ist nicht rechtswirksam."
         ];
         WriteCommonContractBlock(column, caption, lines);
-        return true;
+        return paragraphIndex + 1;
     }
 
-    private bool WriteContractCopy(ColumnDescriptor column, int paragraphIndex)
+    private int WriteContractCopy(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Vertragsausfertigung";
         List<string> lines = 
@@ -235,10 +236,10 @@ public class ContractDocument : IDocument
             "als auch vom Servicenehmer heruntergeladen werden."
         ];
         WriteCommonContractBlock(column, caption, lines);
-        return true;
+        return paragraphIndex + 1;
     }
 
-    private bool WriteFulfillmentPlace(ColumnDescriptor column, int paragraphIndex)
+    private int WriteFulfillmentPlace(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Erfüllungsort";
         List<string> lines = 
@@ -247,10 +248,10 @@ public class ContractDocument : IDocument
             "Klärung etwaiger Streitigkeiten aus diesem Vertrag zu machen."
         ];
         WriteCommonContractBlock(column, caption, lines);
-        return true;
+        return paragraphIndex + 1;
     }
 
-    private bool WriteMiscelaneous(ColumnDescriptor column, int paragraphIndex)
+    private int WriteMiscelaneous(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Sonstiges";
         List<string> lines = 
@@ -272,10 +273,10 @@ public class ContractDocument : IDocument
             }
         }
         WriteCommonContractBlock(column, caption, lines);
-        return true;
+        return paragraphIndex + 1;
     }
 
-    private bool WriteEscapeClause(ColumnDescriptor column, int paragraphIndex)
+    private int WriteEscapeClause(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Salvatorische Klausel";
         List<string> lines = 
@@ -283,7 +284,7 @@ public class ContractDocument : IDocument
             "Sollten einzelne Bestimmungen dieses Vertrags ganz oder teilweise unwirksam sein oder " +
             "werden,bleibt die Wirksamkeit der übrigen Bestimmungen unberührt."
         ];
-        return true;
+        return paragraphIndex + 1;
     }
 
     private void WriteSignatures(ColumnDescriptor column)
