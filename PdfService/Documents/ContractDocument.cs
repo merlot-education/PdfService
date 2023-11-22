@@ -284,6 +284,7 @@ public class ContractDocument : IDocument
             "Sollten einzelne Bestimmungen dieses Vertrags ganz oder teilweise unwirksam sein oder " +
             "werden,bleibt die Wirksamkeit der übrigen Bestimmungen unberührt."
         ];
+        WriteCommonContractBlock(column, caption, lines);
         return paragraphIndex + 1;
     }
 
