@@ -5,27 +5,22 @@ using QuestPDF.Infrastructure;
 
 namespace PdfService.Documents;
 
-public class ContractDocument : IDocument
+public class ContractDocument(ContractModel model) : IDocument
 {
-    private ContractModel Model { get; }
+    private ContractModel Model { get; } = model;
 
-    private Dictionary<string, string> TypeMapping = new Dictionary<string, string>()
+    private readonly Dictionary<string, string> TypeMapping = new()
     {
         { "merlot:MerlotServiceOfferingDataDelivery" , "Datenlieferung" },
         { "merlot:MerlotServiceOfferingCooperation" , "Kooperation" },
         { "merlot:MerlotServiceOfferingSaaS" , "Webanwendung" },
     };
 
-    private TextStyle textStyle = TextStyle.Default.FontSize(12);
-    private TextStyle textSpecialStyle = TextStyle.Default.FontSize(12).Italic();
-    private TextStyle captionStyle = TextStyle.Default.FontSize(14).Bold();
-    private string dateTimeFormatter = "dd.MM.yyyy, HH:mm:ss (\"GMT\"zzz)";
-    private int spacing = 5;
-
-    public ContractDocument(ContractModel model)
-    {
-        Model = model;
-    }
+    private readonly TextStyle CommonTextStyle = TextStyle.Default.FontSize(12);
+    private readonly TextStyle SpecialTextStyle = TextStyle.Default.FontSize(12).Italic();
+    private readonly TextStyle CaptionStyle = TextStyle.Default.FontSize(14).Bold();
+    private readonly string DateTimeFormatter = "dd.MM.yyyy, HH:mm:ss (\"GMT\"zzz)";
+    private readonly int Spacing = 5;
 
     public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
     public DocumentSettings GetSettings() => DocumentSettings.Default;
@@ -88,13 +83,10 @@ public class ContractDocument : IDocument
 
     void ComposeContent(IContainer container)
     {
-        
-
         var paragraphIndex = 1;
         container.PaddingVertical(40).Column(column =>
         {
-            column.Spacing(spacing);
-
+            column.Spacing(Spacing);
             paragraphIndex = WriteContractMatter(column, paragraphIndex);
             paragraphIndex = WriteContractScope(column, paragraphIndex);
             paragraphIndex = WriteCosts(column, paragraphIndex);
@@ -110,53 +102,64 @@ public class ContractDocument : IDocument
         });
     }
 
-    private int WriteContractMatter(ColumnDescriptor column, int paragraphIndex)
+    private void WriteCommonContractBlock(ColumnDescriptor column, string caption, string[] contentLines)
     {
         column.Item().ShowEntire().Text(text =>
         {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Vertragsgegenstand").Style(captionStyle);
-            text.Line("Der Serviceanbieter verpflichtet sich, folgende Dienstleistungen für den Servicenehmer zu erbringen:").Style(textStyle);
-            text.Span("Service ID ").Style(textStyle);
-            text.Span(Model.ServiceId).Style(textSpecialStyle);
-            text.Line(" :").Style(textStyle);
-            text.Line($"\"{Model.ServiceName}\"").Style(textStyle);
-            text.Line($"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate.ToString(dateTimeFormatter)}").Style(textStyle);
-            
+            text.ParagraphSpacing(Spacing);
+            text.Line(caption).Style(CaptionStyle);
+            foreach (string line in contentLines)
+            {
+                text.Line(line).Style(CommonTextStyle);
+            }
         });
+    }
+
+    private int WriteContractMatter(ColumnDescriptor column, int paragraphIndex)
+    {
+
+        var caption = $"§ {paragraphIndex} Vertragsgegenstand";
+        string[] lines = [
+            "Der Serviceanbieter verpflichtet sich, folgende Dienstleistungen für den Servicenehmer zu erbringen:",
+            "Service ID ",
+            Model.ServiceId,
+            " :",
+            $"\"{Model.ServiceName}\"",
+            $"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate.ToString(DateTimeFormatter)}"
+        ];
+
+        WriteCommonContractBlock(column, caption, lines);
         return ++paragraphIndex;
     }
 
     private int WriteContractScope(ColumnDescriptor column, int paragraphIndex)
     {
-        column.Item().ShowEntire().Text(text =>
-        {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Umfang der Leistungen").Style(captionStyle);
-            text.Line("Die übertragenen Dienstleistungen bestehen im Speziellen hieraus:").Style(textStyle);
-            text.Line($"\"{Model.ServiceDescription}\"").Style(textStyle);
-            text.Line("Der Serviceanbieter erklärt sich damit einverstanden, die aufgeführten Leistungen fachgerecht vorzunehmen. Die vereinbarte Vergütung bezieht sich ausschließlich auf die an dieser Stelle genannten Dienstleistungen.").Style(textStyle);
-
-            if (Model.ServiceDataAccessType != null
+        var caption = $"§ {paragraphIndex} Umfang der Leistungen";
+        string[] lines = [
+            "Die übertragenen Dienstleistungen bestehen im Speziellen hieraus:",
+            $"\"{Model.ServiceDescription}\"",
+            "Der Serviceanbieter erklärt sich damit einverstanden, die aufgeführten Leistungen fachgerecht vorzunehmen. " +
+            "Die vereinbarte Vergütung bezieht sich ausschließlich auf die an dieser Stelle genannten Dienstleistungen."
+        ];
+        if (Model.ServiceDataAccessType != null
                 && !Model.ServiceDataAccessType.Equals("")
                 && !Model.ServiceDataAccessType.Equals(ContractModel.MISSING))
-            {
-                text.Line("Die Daten werden folgendermaßen zur Verfügung gestellt:").Style(textStyle);
-                text.Line(Model.ServiceDataAccessType).Style(textStyle);
-            }
-            
-        });
+        {
+            lines.Append("Die Daten werden folgendermaßen zur Verfügung gestellt:");
+            lines.Append(Model.ServiceDataAccessType);
+        }
+
+        WriteCommonContractBlock(column, caption, lines);
         return ++paragraphIndex;
     }
 
-    private int WriteCosts(ColumnDescriptor column, int paragraphIndex) 
+    private int WriteCosts(ColumnDescriptor column, int paragraphIndex)
     {
-        column.Item().ShowEntire().Text(text =>
-        {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Vergütung").Style(captionStyle);
-            text.Line("Die Vergütung der Erbringung des Vertragsgegenstandes ist im Anhang zu finden.").Style(textStyle);
-        });
+        var caption = $"§ {paragraphIndex} Vergütung";
+        string[] lines = [
+            "Die Vergütung der Erbringung des Vertragsgegenstandes ist im Anhang zu finden."
+        ];
+        WriteCommonContractBlock(column, caption, lines);
         return ++paragraphIndex;
     }
 
@@ -166,28 +169,25 @@ public class ContractDocument : IDocument
                 && !Model.ServiceHardwareRequirements.Equals("")
                 && !Model.ServiceHardwareRequirements.Equals(ContractModel.MISSING))
         {
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Anforderungen an die Hardware").Style(captionStyle);
-                text.Line("Folgende Anforderungen an die Hardware müssen erfüllt sein, um den bereitgestellten Dienst in Anspruch zu nehmen:").Style(textStyle);
-                text.Line(Model.ServiceHardwareRequirements).Style(textStyle);
-                paragraphIndex++;
-            });
-            return ++paragraphIndex;
+            var caption = $"§ {paragraphIndex} Anforderungen an die Hardware";
+            string[] lines = [
+                "Folgende Anforderungen an die Hardware müssen erfüllt sein, um den bereitgestellten Dienst in Anspruch zu nehmen:",
+                Model.ServiceHardwareRequirements
+            ];
+            WriteCommonContractBlock(column, caption, lines);
+            paragraphIndex++;
         }
         return paragraphIndex;
     }
 
     private int WriteContractRuntime(ColumnDescriptor column, int paragraphIndex)
     {
-        column.Item().ShowEntire().Text(text =>
-        {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Laufzeit").Style(captionStyle);
-            text.Line("Der Serviceanbieter verpflichtet sich zur Bereitstellung des Dienstes im folgenden Zeitraum:").Style(textStyle);
-            text.Line(Model.ContractRuntime).Style(textStyle);
-        });
+        var caption = $"§ {paragraphIndex} Laufzeit";
+        string[] lines = [
+            "Der Serviceanbieter verpflichtet sich zur Bereitstellung des Dienstes im folgenden Zeitraum:",
+            Model.ContractRuntime
+        ];
+        WriteCommonContractBlock(column, caption, lines);
         return ++paragraphIndex;
     }
 
@@ -197,82 +197,80 @@ public class ContractDocument : IDocument
                 && !Model.ContractDataTransferCount.Equals("")
                 && !Model.ContractDataTransferCount.Equals(ContractModel.MISSING))
         {
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Anzahl möglicher Datenaustausche").Style(captionStyle);
-                text.Line($"Der Serviceanbieter verpflichtet sich, während der Laufzeit des Vertrages bis zu {Model.ContractDataTransferCount} Datenaustausche zu ermöglichen.").Style(textStyle);
-            });
-            return ++paragraphIndex;
+            var caption = $"§ {paragraphIndex} Anzahl möglicher Datenaustausche";
+            string[] lines = [
+                $"Der Serviceanbieter verpflichtet sich, während der Laufzeit des Vertrages " +
+                $"bis zu {Model.ContractDataTransferCount} Datenaustausche zu ermöglichen.",
+            ];
+            WriteCommonContractBlock(column, caption, lines);
+            paragraphIndex++;
         }
         return paragraphIndex;
     }
 
     private int WriteContractChanges(ColumnDescriptor column, int paragraphIndex)
     {
-        column.Item().ShowEntire().Text(text =>
-        {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Vertragsänderungen").Style(captionStyle);
-            text.Line("Jedwede Modifizierung dieses Vertrags ist nicht rechtswirksam.").Style(textStyle);
-        });
+        var caption = $"§ {paragraphIndex} Vertragsänderungen";
+        string[] lines = [
+            "Jedwede Modifizierung dieses Vertrags ist nicht rechtswirksam."
+        ];
+        WriteCommonContractBlock(column, caption, lines);
         return ++paragraphIndex;
     }
 
     private int WriteContractCopy(ColumnDescriptor column, int paragraphIndex)
     {
-        column.Item().ShowEntire().Text(text =>
-        {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Vertragsausfertigung").Style(captionStyle);
-            text.Line("Das vorliegende Dokument liegt in digitaler Form vor und kann sowohl vom Serviceanbieter als auch vom Servicenehmer heruntergeladen werden.").Style(textStyle);
-
-        });
+        var caption = $"§ {paragraphIndex} Vertragsausfertigung";
+        string[] lines = [
+            "Das vorliegende Dokument liegt in digitaler Form vor und kann sowohl vom Serviceanbieter " +
+            "als auch vom Servicenehmer heruntergeladen werden."
+        ];
+        WriteCommonContractBlock(column, caption, lines);
         return ++paragraphIndex;
     }
 
     private int WriteFulfillmentPlace(ColumnDescriptor column, int paragraphIndex)
     {
-        column.Item().ShowEntire().Text(text =>
-        {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Erfüllungsort").Style(captionStyle);
-            text.Line("Auftragnehmer und Auftraggeber einigen sich darauf, 24161 Altenholz zum Gerichtsstand für die Klärung etwaiger Streitigkeiten aus diesem Vertrag zu machen.").Style(textStyle);
-        });
+        var caption = $"§ {paragraphIndex} Erfüllungsort";
+        string[] lines = [
+            "Auftragnehmer und Auftraggeber einigen sich darauf, 24161 Altenholz zum Gerichtsstand für die " +
+            "Klärung etwaiger Streitigkeiten aus diesem Vertrag zu machen."
+        ];
+        WriteCommonContractBlock(column, caption, lines);
         return ++paragraphIndex;
     }
-    
+
     private int WriteMiscelaneous(ColumnDescriptor column, int paragraphIndex)
     {
-        column.Item().ShowEntire().Text(text =>
+        var caption = $"§ {paragraphIndex} Sonstiges";
+        string[] lines = [
+            "Der Serviceanbieter bestätigt, dass alle von ihm gemachten Angaben gewissenhaft und wahrheitsgetreu " +
+            "erfolgten. Darüber hinaus verpflichtet er sich, den Servicenehmer über sämtliche vertragsbezogenen " +
+            "Änderungen zeitnah zu informieren."
+        ];
+        if (Model.ContractTnc.Length != 0 || Model.ContractAttachmentFilenames.Length != 0)
         {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Sonstiges").Style(captionStyle);
-            text.Line("Der Serviceanbieter bestätigt, dass alle von ihm gemachten Angaben gewissenhaft und wahrheitsgetreu erfolgten. Darüber hinaus verpflichtet er sich, den Servicenehmer über sämtliche vertragsbezogenen Änderungen zeitnah zu informieren.").Style(textStyle);
-            if (Model.ContractTnc.Length != 0 || Model.ContractAttachmentFilenames.Length != 0)
+            lines.Append("Folgende weitere Teile sind Bestandteil des Vertrages:");
+            foreach (ContractTncModel tnc in Model.ContractTnc)
             {
-                text.Line("Folgende weitere Teile sind Bestandteil des Vertrages:").Style(textStyle);
-                foreach (ContractTncModel tnc in Model.ContractTnc)
-                {
-                    text.Line($"- AGB: {tnc.TncLink} (Hash: {tnc.TncHash})").Style(textStyle);
-                }
-                foreach (string attachmentFilename in Model.ContractAttachmentFilenames)
-                {
-                    text.Line($"- Anhang: {attachmentFilename}").Style(textStyle);
-                }
+                lines.Append($"- AGB: {tnc.TncLink} (Hash: {tnc.TncHash})");
             }
-        });
+            foreach (string attachmentFilename in Model.ContractAttachmentFilenames)
+            {
+                lines.Append($"- Anhang: {attachmentFilename}");
+            }
+        }
+        WriteCommonContractBlock(column, caption, lines);
         return ++paragraphIndex;
     }
 
     private int WriteEscapeClause(ColumnDescriptor column, int paragraphIndex)
     {
-        column.Item().ShowEntire().Text(text =>
-        {
-            text.ParagraphSpacing(spacing);
-            text.Line($"§ {paragraphIndex} Salvatorische Klausel").Style(captionStyle);
-            text.Line("Sollten einzelne Bestimmungen dieses Vertrags ganz oder teilweise unwirksam sein oder werden,bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.").Style(textStyle);
-        });
+        var caption = $"§ {paragraphIndex} Salvatorische Klausel";
+        string[] lines = [
+            "Sollten einzelne Bestimmungen dieses Vertrags ganz oder teilweise unwirksam sein oder " +
+            "werden,bleibt die Wirksamkeit der übrigen Bestimmungen unberührt."
+        ];
         return ++paragraphIndex;
     }
 
@@ -280,12 +278,12 @@ public class ContractDocument : IDocument
     {
         column.Item().ExtendVertical().AlignBottom().ShowEntire().Text(text =>
         {
-            text.ParagraphSpacing(spacing);
-            text.Line($"Der Nutzer {Model.ProviderSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ProviderLegalName} unterzeichnet:").Style(textStyle);
-            text.Line($"{Model.ProviderSignatureTimestamp.ToString(dateTimeFormatter)} (Signatur {Model.ProviderSignature})").Style(textStyle);
+            text.ParagraphSpacing(Spacing);
+            text.Line($"Der Nutzer {Model.ProviderSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ProviderLegalName} unterzeichnet:").Style(CommonTextStyle);
+            text.Line($"{Model.ProviderSignatureTimestamp.ToString(DateTimeFormatter)} (Signatur {Model.ProviderSignature})").Style(CommonTextStyle);
             text.Line("");
-            text.Line($"Der Nutzer {Model.ConsumerSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ConsumerLegalName} unterzeichnet:").Style(textStyle);
-            text.Line($"{Model.ConsumerSignatureTimestamp.ToString(dateTimeFormatter)} (Signatur {Model.ConsumerSignature})").Style(textStyle);
+            text.Line($"Der Nutzer {Model.ConsumerSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ConsumerLegalName} unterzeichnet:").Style(CommonTextStyle);
+            text.Line($"{Model.ConsumerSignatureTimestamp.ToString(DateTimeFormatter)} (Signatur {Model.ConsumerSignature})").Style(CommonTextStyle);
         });
     }
 }
