@@ -23,7 +23,7 @@ public class UnitTest_PdfProcessor
         var model = new ContractModel()
         {
             ContractId = "Contract:1357",
-            ContractCreationDate = "01.02.2023",
+            ContractCreationDate = new DateTimeOffset(2023, 01, 01, 11, 11, 11, TimeSpan.FromHours(1)),
             ContractRuntime = "5 Tage",
             ContractDataTransferCount = "10",
             ContractAttachmentFilenames = ["MeineTolleDatei.pdf", "MeineAndereTolleDatei.pdf"],
@@ -42,12 +42,12 @@ public class UnitTest_PdfProcessor
             ProviderLegalName = "MeinAnbieter GmbH",
             ProviderSignerUser = "Hans Wurst",
             ProviderSignature = "12345678",
-            ProviderSignatureTimestamp = "01.02.2023 10:05",
+            ProviderSignatureTimestamp = new DateTimeOffset(2023, 01, 01, 11, 11, 11, TimeSpan.FromHours(1)),
 
             ConsumerLegalName = "Konsum AG",
             ConsumerSignerUser = "Marco Polo",
             ConsumerSignature = "87654321",
-            ConsumerSignatureTimestamp = "01.02.2023 09:45"
+            ConsumerSignatureTimestamp = new DateTimeOffset(2023, 01, 01, 11, 11, 11, TimeSpan.FromHours(1)),
         };
         byte[]? result = await client.PostJsonAsync<ContractModel, byte[]>("/PdfProcessor/PdfContract", model);
         Assert.IsNotNull(result);
