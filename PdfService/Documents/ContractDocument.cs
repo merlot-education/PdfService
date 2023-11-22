@@ -98,7 +98,7 @@ public class ContractDocument : IDocument
             paragraphIndex = WriteContractChanges(column, paragraphIndex);
             paragraphIndex = WriteContractCopy(column, paragraphIndex);
             paragraphIndex = WriteFulfillmentPlace(column, paragraphIndex);
-            paragraphIndex = WriteMiscelaneous(column, paragraphIndex);
+            paragraphIndex = WriteMiscellaneous(column, paragraphIndex);
             paragraphIndex = WriteEscapeClause(column, paragraphIndex);
             WriteSignatures(column);
         });
