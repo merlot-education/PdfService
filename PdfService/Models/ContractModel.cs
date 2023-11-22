@@ -12,7 +12,7 @@ public class ContractModel
 
     public string ServiceId { get; set; } = MISSING;
     public string ServiceType { get; set; } = MISSING;
-    public string ServiceName {  get; set; } = MISSING;
+    public string ServiceName { get; set; } = MISSING;
     public string? ServiceDescription { get; set; } = MISSING;
     public string? ServiceDataAccessType { get; set; } = MISSING;
     public string? ServiceHardwareRequirements { get; set; } = MISSING;

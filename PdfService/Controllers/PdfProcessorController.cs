@@ -14,7 +14,7 @@ public class PdfProcessorController : ControllerBase
     protected IPdfProcessorService PdfProcessorService { get; init; }
 
     public PdfProcessorController(IWebHostEnvironment webHostEnvironment,
-        IPdfProcessorService pdfProcessorService) 
+        IPdfProcessorService pdfProcessorService)
     {
         WebHostEnvironment = webHostEnvironment;
         PdfProcessorService = pdfProcessorService;
@@ -33,8 +33,8 @@ public class PdfProcessorController : ControllerBase
             byte[] result = PdfProcessorService.PdfContract(model);
 
             return new FileStreamResult(new MemoryStream(result), "application/pdf");
-        } 
-        catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             Debugger.Break();
             return InternalServerError(ex);
