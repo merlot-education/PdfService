@@ -2,7 +2,7 @@
 
 public class ContractModel
 {
-    public static string MISSING = "-";
+    public static readonly string MISSING = "-";
     public string ContractId { get; set; } = MISSING;
     public DateTimeOffset ContractCreationDate { get; set; } = DateTimeOffset.MinValue;
     public string ContractRuntime { get; set; } = MISSING;

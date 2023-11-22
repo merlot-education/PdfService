@@ -124,9 +124,7 @@ public class ContractDocument : IDocument
         List<string> lines =
         [
             "Der Serviceanbieter verpflichtet sich, folgende Dienstleistungen für den Servicenehmer zu erbringen:",
-            "Service ID ",
-            Model.ServiceId,
-            " :",
+            $"Service ID {Model.ServiceId} :",
             $"\"{Model.ServiceName}\"",
             $"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate.ToString(DateTimeFormatter)}"
         ];
