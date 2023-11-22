@@ -16,6 +16,12 @@ public class ContractDocument : IDocument
         { "merlot:MerlotServiceOfferingSaaS" , "Webanwendung" },
     };
 
+    private TextStyle textStyle = TextStyle.Default.FontSize(12);
+    private TextStyle textSpecialStyle = TextStyle.Default.FontSize(12).Italic();
+    private TextStyle captionStyle = TextStyle.Default.FontSize(14).Bold();
+    private string dateTimeFormatter = "dd.MM.yyyy, HH:mm:ss (\"GMT\"zzz)";
+    private int spacing = 5;
+
     public ContractDocument(ContractModel model)
     {
         Model = model;
@@ -82,155 +88,204 @@ public class ContractDocument : IDocument
 
     void ComposeContent(IContainer container)
     {
-        var textStyle = TextStyle.Default.FontSize(12);
-        var textSpecialStyle = TextStyle.Default.FontSize(12).Italic();
-        var captionStyle = TextStyle.Default.FontSize(14).Bold();
-        var dateTimeFormatter = "dd.MM.yyyy, HH:mm:ss (\"GMT\"zzz)";
-        var spacing = 5;
+        
 
         var paragraphIndex = 1;
         container.PaddingVertical(40).Column(column =>
         {
             column.Spacing(spacing);
 
-            column.Item().ShowEntire().Text(text =>
+            paragraphIndex = WriteContractMatter(column, paragraphIndex);
+            paragraphIndex = WriteContractScope(column, paragraphIndex);
+            paragraphIndex = WriteCosts(column, paragraphIndex);
+            paragraphIndex = WriteHardwareRequirements(column, paragraphIndex);
+            paragraphIndex = WriteContractRuntime(column, paragraphIndex);
+            paragraphIndex = WriteDataTransferCount(column, paragraphIndex);
+            paragraphIndex = WriteContractChanges(column, paragraphIndex);
+            paragraphIndex = WriteContractCopy(column, paragraphIndex);
+            paragraphIndex = WriteFulfillmentPlace(column, paragraphIndex);
+            paragraphIndex = WriteMiscelaneous(column, paragraphIndex);
+            paragraphIndex = WriteEscapeClause(column, paragraphIndex);
+            WriteSignatures(column);
+        });
+    }
+
+    private int WriteContractMatter(ColumnDescriptor column, int paragraphIndex)
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Vertragsgegenstand").Style(captionStyle);
+            text.Line("Der Serviceanbieter verpflichtet sich, folgende Dienstleistungen für den Servicenehmer zu erbringen:").Style(textStyle);
+            text.Span("Service ID ").Style(textStyle);
+            text.Span(Model.ServiceId).Style(textSpecialStyle);
+            text.Line(" :").Style(textStyle);
+            text.Line($"\"{Model.ServiceName}\"").Style(textStyle);
+            text.Line($"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate.ToString(dateTimeFormatter)}").Style(textStyle);
+            
+        });
+        return ++paragraphIndex;
+    }
+
+    private int WriteContractScope(ColumnDescriptor column, int paragraphIndex)
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Umfang der Leistungen").Style(captionStyle);
+            text.Line("Die übertragenen Dienstleistungen bestehen im Speziellen hieraus:").Style(textStyle);
+            text.Line($"\"{Model.ServiceDescription}\"").Style(textStyle);
+            text.Line("Der Serviceanbieter erklärt sich damit einverstanden, die aufgeführten Leistungen fachgerecht vorzunehmen. Die vereinbarte Vergütung bezieht sich ausschließlich auf die an dieser Stelle genannten Dienstleistungen.").Style(textStyle);
+
+            if (Model.ServiceDataAccessType != null
+                && !Model.ServiceDataAccessType.Equals("")
+                && !Model.ServiceDataAccessType.Equals(ContractModel.MISSING))
             {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Vertragsgegenstand").Style(captionStyle);
-                text.Line("Der Serviceanbieter verpflichtet sich, folgende Dienstleistungen für den Servicenehmer zu erbringen:").Style(textStyle);
-                text.Span("Service ID ").Style(textStyle);
-                text.Span(Model.ServiceId).Style(textSpecialStyle);
-                text.Line(" :").Style(textStyle);
-                text.Line($"\"{Model.ServiceName}\"").Style(textStyle);
-                text.Line($"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate.ToString(dateTimeFormatter)}").Style(textStyle);
-                paragraphIndex++;
-            });
+                text.Line("Die Daten werden folgendermaßen zur Verfügung gestellt:").Style(textStyle);
+                text.Line(Model.ServiceDataAccessType).Style(textStyle);
+            }
+            
+        });
+        return ++paragraphIndex;
+    }
 
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Umfang der Leistungen").Style(captionStyle);
-                text.Line("Die übertragenen Dienstleistungen bestehen im Speziellen hieraus:").Style(textStyle);
-                text.Line($"\"{Model.ServiceDescription}\"").Style(textStyle);
-                text.Line("Der Serviceanbieter erklärt sich damit einverstanden, die aufgeführten Leistungen fachgerecht vorzunehmen. Die vereinbarte Vergütung bezieht sich ausschließlich auf die an dieser Stelle genannten Dienstleistungen.").Style(textStyle);
+    private int WriteCosts(ColumnDescriptor column, int paragraphIndex) 
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Vergütung").Style(captionStyle);
+            text.Line("Die Vergütung der Erbringung des Vertragsgegenstandes ist im Anhang zu finden.").Style(textStyle);
+        });
+        return ++paragraphIndex;
+    }
 
-                if (Model.ServiceDataAccessType != null
-                    && !Model.ServiceDataAccessType.Equals("")
-                    && !Model.ServiceDataAccessType.Equals(ContractModel.MISSING))
-                {
-                    text.Line("Die Daten werden folgendermaßen zur Verfügung gestellt:").Style(textStyle);
-                    text.Line(Model.ServiceDataAccessType).Style(textStyle);
-                }
-                paragraphIndex++;
-            });
-
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Vergütung").Style(captionStyle);
-                text.Line("Die Vergütung der Erbringung des Vertragsgegenstandes ist im Anhang zu finden.").Style(textStyle);
-                paragraphIndex++;
-            });
-
-            if (Model.ServiceHardwareRequirements != null
+    private int WriteHardwareRequirements(ColumnDescriptor column, int paragraphIndex)
+    {
+        if (Model.ServiceHardwareRequirements != null
                 && !Model.ServiceHardwareRequirements.Equals("")
                 && !Model.ServiceHardwareRequirements.Equals(ContractModel.MISSING))
-            {
-                column.Item().ShowEntire().Text(text =>
-                {
-                    text.ParagraphSpacing(spacing);
-                    text.Line($"§ {paragraphIndex} Anforderungen an die Hardware").Style(captionStyle);
-                    text.Line("Folgende Anforderungen an die Hardware müssen erfüllt sein, um den bereitgestellten Dienst in Anspruch zu nehmen:").Style(textStyle);
-                    text.Line(Model.ServiceHardwareRequirements).Style(textStyle);
-                    paragraphIndex++;
-                });
-            }
-
-
+        {
             column.Item().ShowEntire().Text(text =>
             {
                 text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Laufzeit").Style(captionStyle);
-                text.Line("Der Serviceanbieter verpflichtet sich zur Bereitstellung des Dienstes im folgenden Zeitraum:").Style(textStyle);
-                text.Line(Model.ContractRuntime).Style(textStyle);
+                text.Line($"§ {paragraphIndex} Anforderungen an die Hardware").Style(captionStyle);
+                text.Line("Folgende Anforderungen an die Hardware müssen erfüllt sein, um den bereitgestellten Dienst in Anspruch zu nehmen:").Style(textStyle);
+                text.Line(Model.ServiceHardwareRequirements).Style(textStyle);
                 paragraphIndex++;
             });
+            return ++paragraphIndex;
+        }
+        return paragraphIndex;
+    }
 
-            if (Model.ContractDataTransferCount != null
+    private int WriteContractRuntime(ColumnDescriptor column, int paragraphIndex)
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Laufzeit").Style(captionStyle);
+            text.Line("Der Serviceanbieter verpflichtet sich zur Bereitstellung des Dienstes im folgenden Zeitraum:").Style(textStyle);
+            text.Line(Model.ContractRuntime).Style(textStyle);
+        });
+        return ++paragraphIndex;
+    }
+
+    private int WriteDataTransferCount(ColumnDescriptor column, int paragraphIndex)
+    {
+        if (Model.ContractDataTransferCount != null
                 && !Model.ContractDataTransferCount.Equals("")
                 && !Model.ContractDataTransferCount.Equals(ContractModel.MISSING))
+        {
+            column.Item().ShowEntire().Text(text =>
             {
-                column.Item().ShowEntire().Text(text =>
+                text.ParagraphSpacing(spacing);
+                text.Line($"§ {paragraphIndex} Anzahl möglicher Datenaustausche").Style(captionStyle);
+                text.Line($"Der Serviceanbieter verpflichtet sich, während der Laufzeit des Vertrages bis zu {Model.ContractDataTransferCount} Datenaustausche zu ermöglichen.").Style(textStyle);
+            });
+            return ++paragraphIndex;
+        }
+        return paragraphIndex;
+    }
+
+    private int WriteContractChanges(ColumnDescriptor column, int paragraphIndex)
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Vertragsänderungen").Style(captionStyle);
+            text.Line("Jedwede Modifizierung dieses Vertrags ist nicht rechtswirksam.").Style(textStyle);
+        });
+        return ++paragraphIndex;
+    }
+
+    private int WriteContractCopy(ColumnDescriptor column, int paragraphIndex)
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Vertragsausfertigung").Style(captionStyle);
+            text.Line("Das vorliegende Dokument liegt in digitaler Form vor und kann sowohl vom Serviceanbieter als auch vom Servicenehmer heruntergeladen werden.").Style(textStyle);
+
+        });
+        return ++paragraphIndex;
+    }
+
+    private int WriteFulfillmentPlace(ColumnDescriptor column, int paragraphIndex)
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Erfüllungsort").Style(captionStyle);
+            text.Line("Auftragnehmer und Auftraggeber einigen sich darauf, 24161 Altenholz zum Gerichtsstand für die Klärung etwaiger Streitigkeiten aus diesem Vertrag zu machen.").Style(textStyle);
+        });
+        return ++paragraphIndex;
+    }
+    
+    private int WriteMiscelaneous(ColumnDescriptor column, int paragraphIndex)
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Sonstiges").Style(captionStyle);
+            text.Line("Der Serviceanbieter bestätigt, dass alle von ihm gemachten Angaben gewissenhaft und wahrheitsgetreu erfolgten. Darüber hinaus verpflichtet er sich, den Servicenehmer über sämtliche vertragsbezogenen Änderungen zeitnah zu informieren.").Style(textStyle);
+            if (Model.ContractTnc.Length != 0 || Model.ContractAttachmentFilenames.Length != 0)
+            {
+                text.Line("Folgende weitere Teile sind Bestandteil des Vertrages:").Style(textStyle);
+                foreach (ContractTncModel tnc in Model.ContractTnc)
                 {
-                    text.ParagraphSpacing(spacing);
-                    text.Line($"§ {paragraphIndex} Anzahl möglicher Datenaustausche").Style(captionStyle);
-                    text.Line($"Der Serviceanbieter verpflichtet sich, während der Laufzeit des Vertrages bis zu {Model.ContractDataTransferCount} Datenaustausche zu ermöglichen.").Style(textStyle);
-                    paragraphIndex++;
-                });
-            }
-
-
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Vertragsänderungen").Style(captionStyle);
-                text.Line("Jedwede Modifizierung dieses Vertrags ist nicht rechtswirksam.").Style(textStyle);
-                paragraphIndex++;
-            });
-
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Vertragsausfertigung").Style(captionStyle);
-                text.Line("Das vorliegende Dokument liegt in digitaler Form vor und kann sowohl vom Serviceanbieter als auch vom Servicenehmer heruntergeladen werden.").Style(textStyle);
-                paragraphIndex++;
-            });
-
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Erfüllungsort").Style(captionStyle);
-                text.Line("Auftragnehmer und Auftraggeber einigen sich darauf, 24161 Altenholz zum Gerichtsstand für die Klärung etwaiger Streitigkeiten aus diesem Vertrag zu machen.").Style(textStyle);
-                paragraphIndex++;
-            });
-
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Sonstiges").Style(captionStyle);
-                text.Line("Der Serviceanbieter bestätigt, dass alle von ihm gemachten Angaben gewissenhaft und wahrheitsgetreu erfolgten. Darüber hinaus verpflichtet er sich, den Servicenehmer über sämtliche vertragsbezogenen Änderungen zeitnah zu informieren.").Style(textStyle);
-                if (Model.ContractTnc.Length != 0 || Model.ContractAttachmentFilenames.Length != 0)
-                {
-                    text.Line("Folgende weitere Teile sind Bestandteil des Vertrages:").Style(textStyle);
-                    foreach (ContractTncModel tnc in Model.ContractTnc)
-                    {
-                        text.Line($"- AGB: {tnc.TncLink} (Hash: {tnc.TncHash})").Style(textStyle);
-                    }
-                    foreach (string attachmentFilename in Model.ContractAttachmentFilenames)
-                    {
-                        text.Line($"- Anhang: {attachmentFilename}").Style(textStyle);
-                    }
+                    text.Line($"- AGB: {tnc.TncLink} (Hash: {tnc.TncHash})").Style(textStyle);
                 }
-                paragraphIndex++;
-            });
+                foreach (string attachmentFilename in Model.ContractAttachmentFilenames)
+                {
+                    text.Line($"- Anhang: {attachmentFilename}").Style(textStyle);
+                }
+            }
+        });
+        return ++paragraphIndex;
+    }
 
-            column.Item().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"§ {paragraphIndex} Salvatorische Klausel").Style(captionStyle);
-                text.Line("Sollten einzelne Bestimmungen dieses Vertrags ganz oder teilweise unwirksam sein oder werden,bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.").Style(textStyle);
-                paragraphIndex++;
-            });
+    private int WriteEscapeClause(ColumnDescriptor column, int paragraphIndex)
+    {
+        column.Item().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"§ {paragraphIndex} Salvatorische Klausel").Style(captionStyle);
+            text.Line("Sollten einzelne Bestimmungen dieses Vertrags ganz oder teilweise unwirksam sein oder werden,bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.").Style(textStyle);
+        });
+        return ++paragraphIndex;
+    }
 
-            column.Item().ExtendVertical().AlignBottom().ShowEntire().Text(text =>
-            {
-                text.ParagraphSpacing(spacing);
-                text.Line($"Der Nutzer {Model.ProviderSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ProviderLegalName} unterzeichnet:").Style(textStyle);
-                text.Line($"{Model.ProviderSignatureTimestamp.ToString(dateTimeFormatter)} (Signatur {Model.ProviderSignature})").Style(textStyle);
-                text.Line("");
-                text.Line($"Der Nutzer {Model.ConsumerSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ConsumerLegalName} unterzeichnet:").Style(textStyle);
-                text.Line($"{Model.ConsumerSignatureTimestamp.ToString(dateTimeFormatter)} (Signatur {Model.ConsumerSignature})").Style(textStyle);
-            });
+    private void WriteSignatures(ColumnDescriptor column)
+    {
+        column.Item().ExtendVertical().AlignBottom().ShowEntire().Text(text =>
+        {
+            text.ParagraphSpacing(spacing);
+            text.Line($"Der Nutzer {Model.ProviderSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ProviderLegalName} unterzeichnet:").Style(textStyle);
+            text.Line($"{Model.ProviderSignatureTimestamp.ToString(dateTimeFormatter)} (Signatur {Model.ProviderSignature})").Style(textStyle);
+            text.Line("");
+            text.Line($"Der Nutzer {Model.ConsumerSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ConsumerLegalName} unterzeichnet:").Style(textStyle);
+            text.Line($"{Model.ConsumerSignatureTimestamp.ToString(dateTimeFormatter)} (Signatur {Model.ConsumerSignature})").Style(textStyle);
         });
     }
 }
