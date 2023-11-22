@@ -249,7 +249,7 @@ public class ContractDocument : IDocument
         return paragraphIndex + 1;
     }
 
-    private int WriteMiscelaneous(ColumnDescriptor column, int paragraphIndex)
+    private int WriteMiscellaneous(ColumnDescriptor column, int paragraphIndex)
     {
         var caption = $"§ {paragraphIndex} Sonstiges";
         List<string> lines = 
