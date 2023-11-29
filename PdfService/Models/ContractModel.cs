@@ -15,6 +15,7 @@ public class ContractModel
     public string ServiceName { get; set; } = MISSING;
     public string? ServiceDescription { get; set; } = MISSING;
     public string? ServiceDataAccessType { get; set; } = MISSING;
+    public string? ServiceDataTransferType { get; set; } = MISSING;
     public string? ServiceHardwareRequirements { get; set; } = MISSING;
 
 

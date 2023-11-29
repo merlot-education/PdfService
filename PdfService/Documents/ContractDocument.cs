@@ -124,7 +124,7 @@ public class ContractDocument : IDocument
         List<string> lines =
         [
             "Der Serviceanbieter verpflichtet sich, folgende Dienstleistungen für den Servicenehmer zu erbringen:",
-            $"Service ID {Model.ServiceId} :",
+            $"Service-ID {Model.ServiceId} :",
             $"\"{Model.ServiceName}\"",
             $"Der Vertrag tritt mit dem folgenden Datum in Kraft: {Model.ContractCreationDate.ToString(DateTimeFormatter)}"
         ];
@@ -145,10 +145,13 @@ public class ContractDocument : IDocument
         ];
         if (Model.ServiceDataAccessType != null
                 && !Model.ServiceDataAccessType.Equals("")
-                && !Model.ServiceDataAccessType.Equals(ContractModel.MISSING))
+                && !Model.ServiceDataAccessType.Equals(ContractModel.MISSING)
+                && Model.ServiceDataTransferType != null
+                && !Model.ServiceDataTransferType.Equals("")
+                && !Model.ServiceDataTransferType.Equals(ContractModel.MISSING))
         {
             lines.Add("Die Daten werden folgendermaßen zur Verfügung gestellt:");
-            lines.Add(Model.ServiceDataAccessType);
+            lines.Add(Model.ServiceDataAccessType + " (Datenzugriffsart), " + Model.ServiceDataTransferType + " (Datentransferart)");
         }
 
         WriteCommonContractBlock(column, caption, lines);
