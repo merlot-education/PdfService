@@ -297,7 +297,7 @@ public class ContractDocument : IDocument
             text.Line($"Der Nutzer {Model.ProviderSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ProviderLegalName} unterzeichnet:").Style(CommonTextStyle);
             text.Line($"{Model.ProviderSignatureTimestamp.ToString(DateTimeFormatter)}").Style(CommonTextStyle);
             text.Line("");
-            text.Line($"Der Nutzer {Model.ConsumerSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ConsumerLegalName} unterzeichnet:").Style(CommonTextStyle);
+            text.Line($"Der Nutzer {Model.ConsumerSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Servicenehmer {Model.ConsumerLegalName} unterzeichnet:").Style(CommonTextStyle);
             text.Line($"{Model.ConsumerSignatureTimestamp.ToString(DateTimeFormatter)}").Style(CommonTextStyle);
         });
     }
