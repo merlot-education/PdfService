@@ -283,7 +283,7 @@ public class ContractDocument : IDocument
         List<string> lines = 
         [
             "Sollten einzelne Bestimmungen dieses Vertrags ganz oder teilweise unwirksam sein oder " +
-            "werden,bleibt die Wirksamkeit der übrigen Bestimmungen unberührt."
+            "werden, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt."
         ];
         WriteCommonContractBlock(column, caption, lines);
         return paragraphIndex + 1;
@@ -295,10 +295,10 @@ public class ContractDocument : IDocument
         {
             text.ParagraphSpacing(Spacing);
             text.Line($"Der Nutzer {Model.ProviderSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ProviderLegalName} unterzeichnet:").Style(CommonTextStyle);
-            text.Line($"{Model.ProviderSignatureTimestamp.ToString(DateTimeFormatter)} (Signatur {Model.ProviderSignature})").Style(CommonTextStyle);
+            text.Line($"{Model.ProviderSignatureTimestamp.ToString(DateTimeFormatter)}").Style(CommonTextStyle);
             text.Line("");
             text.Line($"Der Nutzer {Model.ConsumerSignerUser} hat den Vertrag an folgendem Datum stellvertretend für den Serviceanbieter {Model.ConsumerLegalName} unterzeichnet:").Style(CommonTextStyle);
-            text.Line($"{Model.ConsumerSignatureTimestamp.ToString(DateTimeFormatter)} (Signatur {Model.ConsumerSignature})").Style(CommonTextStyle);
+            text.Line($"{Model.ConsumerSignatureTimestamp.ToString(DateTimeFormatter)}").Style(CommonTextStyle);
         });
     }
 }
