@@ -21,10 +21,8 @@ public class ContractModel
 
     public string ProviderLegalName { get; set; } = MISSING;
     public string ProviderSignerUser { get; set; } = MISSING;
-    public string ProviderSignature { get; set; } = MISSING;
     public DateTimeOffset ProviderSignatureTimestamp { get; set; } = DateTimeOffset.MinValue;
     public string ConsumerSignerUser { get; set; } = MISSING;
-    public string ConsumerSignature { get; set; } = MISSING;
     public DateTimeOffset ConsumerSignatureTimestamp { get; set; } = DateTimeOffset.MinValue;
     public string ConsumerLegalName { get; set; } = MISSING;
 }

@@ -41,12 +41,10 @@ public class UnitTest_PdfProcessor
 
             ProviderLegalName = "MeinAnbieter GmbH",
             ProviderSignerUser = "Hans Wurst",
-            ProviderSignature = "12345678",
             ProviderSignatureTimestamp = new DateTimeOffset(2023, 01, 01, 11, 11, 11, TimeSpan.FromHours(1)),
 
             ConsumerLegalName = "Konsum AG",
             ConsumerSignerUser = "Marco Polo",
-            ConsumerSignature = "87654321",
             ConsumerSignatureTimestamp = new DateTimeOffset(2023, 01, 01, 11, 11, 11, TimeSpan.FromHours(1)),
         };
         byte[]? result = await client.PostJsonAsync<ContractModel, byte[]>("/PdfProcessor/PdfContract", model);
