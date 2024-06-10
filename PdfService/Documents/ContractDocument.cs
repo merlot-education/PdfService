@@ -10,9 +10,9 @@ public class ContractDocument : IDocument
     private ContractModel Model { get; }
     private readonly Dictionary<string, string> TypeMapping = new()
     {
-        { "merlot:MerlotServiceOfferingDataDelivery" , "Datenlieferung" },
-        { "merlot:MerlotServiceOfferingCooperation" , "Kooperation" },
-        { "merlot:MerlotServiceOfferingSaaS" , "Webanwendung" },
+        { "merlot:MerlotDataDeliveryServiceOffering" , "Datenlieferung" },
+        { "merlot:MerlotCoopContractServiceOffering" , "Kooperation" },
+        { "merlot:MerlotSaasServiceOffering" , "Webanwendung" },
     };
     private readonly TextStyle CommonTextStyle = TextStyle.Default.FontSize(12);
     private readonly TextStyle CaptionStyle = TextStyle.Default.FontSize(14).Bold();
