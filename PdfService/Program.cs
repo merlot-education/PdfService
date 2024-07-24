@@ -26,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.IgnoreNullValues = true;
+        options.JsonSerializerOptions.IgnoreNullValues = true; // NOSONAR even though its deprecated there is currently no other way for deserialization, see https://github.com/dotnet/runtime/issues/90007
     });
 builder.Services.AddScoped<IPdfProcessorService, PdfProcessorService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -42,10 +42,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
@@ -54,4 +50,4 @@ app.Run();
 /// The class definition is required to make this service testable
 /// PdfService.Tests requires a visible Program class for the WebApplicationFactory
 /// </summary>
-public partial class Program { }
+public partial class Program { } // NOSONAR see above

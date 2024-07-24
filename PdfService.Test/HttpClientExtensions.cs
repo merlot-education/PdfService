@@ -38,7 +38,7 @@ public static class HttpClientExtensions
 
             return model;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return default;
         }
@@ -68,7 +68,7 @@ public static class HttpClientExtensions
 
             return model;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return default;
         }
@@ -91,7 +91,7 @@ public static class HttpClientExtensions
 
             return model;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return default;
         }
@@ -109,7 +109,7 @@ public static class HttpClientExtensions
 
             return true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return false;
         }
