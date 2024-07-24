@@ -23,11 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.IgnoreNullValues = true; // NOSONAR even though its deprecated there is currently no other way for deserialization, see https://github.com/dotnet/runtime/issues/90007
-    });
+builder.Services.AddControllers().AddJsonOptions(options =>{options.JsonSerializerOptions.IgnoreNullValues = true;}); // NOSONAR even though its deprecated there is currently no other way for deserialization, see https://github.com/dotnet/runtime/issues/90007
 builder.Services.AddScoped<IPdfProcessorService, PdfProcessorService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
